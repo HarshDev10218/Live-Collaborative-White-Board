@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Real-Time Collaborative Whiteboard</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Load client-side Socket.IO framework -->
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Control Hub -->
+  <header class="toolbar">
+    <div class="control-group system-status">
+      <span id="status-badge" class="badge disconnected">Disconnected</span>
+      <span class="user-count">👥 <span id="user-count-val">1</span> Online</span>
+      <span class="room-display">Room: <strong id="room-id-val">default</strong></span>
+    </div>
+
+    <div class="control-group tools">
+      <button id="btn-pen" class="tool-btn active" title="Pen Tool">✏️ Pen</button>
+      <button id="btn-eraser" class="tool-btn" title="Eraser Tool">🧽 Eraser</button>
+      
+      <div class="divider"></div>
+
+      <label for="color-picker" class="input-label">Color:</label>
+      <input type="color" id="color-picker" value="#2563eb">
+
+      <label for="brush-size" class="input-label">Size:</label>
+      <input type="range" id="brush-size" min="1" max="50" value="5">
+      <span id="size-val">5px</span>
+    </div>
+
+    <div class="control-group actions">
+      <button id="btn-undo" class="action-btn" title="Undo last stroke">↩️ Undo</button>
+      <button id="btn-clear" class="action-btn danger" title="Clear canvas for all users">Clear Board</button>
+      <button id="btn-download" class="action-btn success" title="Save as PNG">📥 Download</button>
+    </div>
+  </header>
+
+  <!-- Interaction Canvas Area -->
+  <main class="canvas-container">
+    <canvas id="whiteboard"></canvas>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

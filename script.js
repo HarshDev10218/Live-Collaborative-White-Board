@@ -9,6 +9,7 @@ const socket = io(socketUrl);
 
 // --- DOM Element Registrations ---
 const canvasContainer = document.getElementById('canvas-container');
+const brushCursor = document.getElementById('brush-cursor');
 const statusBadge = document.getElementById('status-badge');
 const userCountVal = document.getElementById('user-count-val');
 const roomIdVal = document.getElementById('room-id-val');
@@ -290,32 +291,112 @@ function applySnapshotToCanvas(screenIndex, dataURL) {
   };
 }
 
+// --- Custom Cursor Logic ---
+function updateBrushCursor() {
+  if (!brushCursor) return;
+  brushCursor.style.width = `${currentConfig.size}px`;
+  brushCursor.style.height = `${currentConfig.size}px`;
+
+  if (isEraserMode) {
+    brushCursor.style.backgroundColor = 'transparent';
+    brushCursor.style.borderColor = 'rgba(0, 0, 0, 0.5)';
+  } else {
+    brushCursor.style.backgroundColor = currentConfig.color;
+    brushCursor.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+  }
+}
+
+canvasContainer.addEventListener('mousemove', (e) => {
+  if (!brushCursor) return;
+  brushCursor.style.display = 'block';
+  brushCursor.style.left = `${e.clientX}px`;
+  brushCursor.style.top = `${e.clientY}px`;
+});
+
+canvasContainer.addEventListener('mouseleave', () => {
+  if (!brushCursor) return;
+  brushCursor.style.display = 'none';
+});
+
 // --- Toolbar Interface Interactive Controls ---
 colorPicker.addEventListener('input', (e) => {
   currentConfig.color = e.target.value;
   setPenMode();
+  updateBrushCursor();
 });
 
 brushSizeSlider.addEventListener('input', (e) => {
   currentConfig.size = parseInt(e.target.value);
   sizeValText.textContent = `${currentConfig.size}px`;
+  updateBrushCursor();
 });
 
 function setPenMode() {
   isEraserMode = false;
   btnPen.classList.add('active');
   btnEraser.classList.remove('active');
+  updateBrushCursor();
 }
 
 function setEraserMode() {
   isEraserMode = true;
   btnEraser.classList.add('active');
   btnPen.classList.remove('active');
+  updateBrushCursor();
 }
 
 btnPen.addEventListener('click', setPenMode);
 btnEraser.addEventListener('click', setEraserMode);
 btnUndo.addEventListener('click', executeUndo);
+
+// --- Quick Color Swatches ---
+const colorSwatches = document.querySelectorAll('.color-swatch');
+colorSwatches.forEach(swatch => {
+  swatch.addEventListener('click', () => {
+    const selectedColor = swatch.getAttribute('data-color');
+    currentConfig.color = selectedColor;
+    colorPicker.value = selectedColor;
+    setPenMode();
+    updateBrushCursor();
+  });
+});
+
+// --- Keyboard Shortcuts ---
+document.addEventListener('keydown', (e) => {
+  // Ignore shortcuts if typing in an input (though there aren't text inputs yet, good practice)
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  switch(e.key.toLowerCase()) {
+    case 'p':
+      btnPen.click();
+      break;
+    case 'e':
+      btnEraser.click();
+      break;
+    case 'z':
+      if (e.ctrlKey || e.metaKey) {
+        btnUndo.click();
+      }
+      break;
+    case 'c':
+      btnClear.click();
+      break;
+    case '[':
+      if (currentConfig.size > 1) {
+        currentConfig.size -= 1;
+        brushSizeSlider.value = currentConfig.size;
+        brushSizeSlider.dispatchEvent(new Event('input'));
+      }
+      break;
+    case ']':
+      if (currentConfig.size < parseInt(brushSizeSlider.max)) {
+        currentConfig.size += 1;
+        brushSizeSlider.value = currentConfig.size;
+        brushSizeSlider.dispatchEvent(new Event('input'));
+      }
+      break;
+  }
+});
 
 btnClear.addEventListener('click', () => {
   if (confirm("Clear the whiteboard for everyone in this room?")) {
@@ -360,6 +441,9 @@ btnAddScreen.addEventListener('click', () => {
   updateActiveScreen();
   socket.emit('add-screen');
 });
+
+// Initialize brush cursor appearance
+updateBrushCursor();
 
 // Fire layout calculations on init loop
 resizeCanvas();

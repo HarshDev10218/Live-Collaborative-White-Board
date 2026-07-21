@@ -28,6 +28,13 @@
       <label for="color-picker" class="input-label">Color:</label>
       <input type="color" id="color-picker" value="#2563eb">
 
+      <div class="color-swatches">
+        <button class="color-swatch" data-color="#000000" style="background-color: #000000;" title="Black"></button>
+        <button class="color-swatch" data-color="#ef4444" style="background-color: #ef4444;" title="Red"></button>
+        <button class="color-swatch" data-color="#10b981" style="background-color: #10b981;" title="Green"></button>
+        <button class="color-swatch" data-color="#2563eb" style="background-color: #2563eb;" title="Blue"></button>
+      </div>
+
       <label for="brush-size" class="input-label">Size:</label>
       <input type="range" id="brush-size" min="1" max="50" value="5">
       <span id="size-val">5px</span>
@@ -49,6 +56,7 @@
 
   <!-- Interaction Canvas Area -->
   <main id="canvas-container" class="canvas-container">
+    <div id="brush-cursor" class="brush-cursor"></div>
   </main>
 
   <script src="/script.js"></script>

@@ -138,16 +138,20 @@ button:hover {
   height: 100%;
 }
 
-canvas {
+.whiteboard {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  display: block;
+  display: none;
   background-color: #ffffff;
   /* Crucial parameter: Prevents default browser panning and zooming actions while drawing */
   touch-action: none; 
+}
+
+.whiteboard.active {
+  display: block;
 }
 
 /* Responsive breakpoint adjustments for mobile toolbars */

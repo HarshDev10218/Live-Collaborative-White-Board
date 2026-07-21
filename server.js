@@ -50,23 +50,27 @@ io.on('connection', (socket) => {
   });
 
   // 3. Broadcast synchronous undo states to other peers in the same room[cite: 5]
-  socket.on('sync-undo', (canvasSnapshot) => {
-    socket.to(currentRoom).emit('sync-undo', canvasSnapshot);
+  socket.on('sync-undo', (data) => {
+    socket.to(currentRoom).emit('sync-undo', data);
   });
 
   // 4. Broadcast board clearing commands to all members of the room[cite: 5]
-  socket.on('clear-board', () => {
-    io.to(currentRoom).emit('clear-board');
+  socket.on('clear-board', (data) => {
+    socket.to(currentRoom).emit('clear-board', data);
+  });
+
+  socket.on('add-screen', () => {
+    socket.to(currentRoom).emit('add-screen');
   });
 
   // 5. Manage structural data cleanups upon socket disconnection drops[cite: 5]
   socket.on('disconnect', () => {
     if (roomUsers[currentRoom]) {
       roomUsers[currentRoom]--;
-      
+
       // Update data meters for remaining users inside the space[cite: 5]
       io.to(currentRoom).emit('update-user-count', roomUsers[currentRoom]);
-      
+
       // Purge dead room structures from memory states when completely empty[cite: 5]
       if (roomUsers[currentRoom] === 0) {
         delete roomUsers[currentRoom];

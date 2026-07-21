@@ -33,6 +33,13 @@
       <span id="size-val">5px</span>
     </div>
 
+    <div class="control-group screens">
+      <button id="btn-prev-screen" class="action-btn" title="Previous Screen">◀</button>
+      <span id="screen-indicator" class="input-label">Screen 1 / 1</span>
+      <button id="btn-next-screen" class="action-btn" title="Next Screen">▶</button>
+      <button id="btn-add-screen" class="action-btn" title="Add Screen">➕ Add</button>
+    </div>
+
     <div class="control-group actions">
       <button id="btn-undo" class="action-btn" title="Undo last stroke">↩️ Undo</button>
       <button id="btn-clear" class="action-btn danger" title="Clear canvas for all users">Clear Board</button>
@@ -41,8 +48,7 @@
   </header>
 
   <!-- Interaction Canvas Area -->
-  <main class="canvas-container">
-    <canvas id="whiteboard"></canvas>
+  <main id="canvas-container" class="canvas-container">
   </main>
 
   <script src="/script.js"></script>
